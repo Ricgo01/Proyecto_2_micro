@@ -1,0 +1,21 @@
+Nombre del Alimento,Tiempo de Preparacion,Temperatura de Coccion (°C),Tiempo de Coccion,Tiempo de Empaquetado,Porciones por 100kg
+Papas,30,80,25,15,50
+Pollo,45,180,45,20,200
+Carne,60,200,60,30,150
+Pescado,20,160,30,10,250
+Vegetales,15,100,20,10,300
+Pan,120,220,25,20,500
+Pasta,10,100,15,5,400
+Arroz,15,90,18,10,350
+Huevo,5,80,10,5,200
+Sopa,30,100,30,15,400
+Tortilla,20,180,5,3,600
+Frijoles,45,150,60,30,250
+Queso,30,120,20,10,300
+Pizza,20,250,20,10,150
+Tarta,30,180,45,20,100
+Galletas,15,180,12,8,1000
+Pastel,60,180,50,30,120
+Empanada,40,200,30,20,220
+Hamburguesa,10,200,15,10,400
+Salchicha,10,160,20,5,350
