@@ -88,24 +88,101 @@ int main() {
     }
 
     // Pedir al usuario que seleccione un alimento
-    int seleccion;
-    printf("Seleccione un alimento por su número: ");
-    scanf("%d", &seleccion);
+    
+   /*
+        int seleccion;
+        printf("Seleccione un alimento por su número: ");
+        scanf("%d", &seleccion);
 
-    if (seleccion < 1 || seleccion > count) {
-        printf("Selección inválida.\n");
-        return EXIT_FAILURE;
+        if (seleccion < 1 || seleccion > count) {
+            printf("Selección inválida.\n");
+            return EXIT_FAILURE;
+        }
+
+        // Mostrar las características del alimento seleccionado
+        Alimento seleccionado = alimentos[seleccion - 1];
+        printf("\nCaracterísticas del alimento seleccionado:\n");
+        printf("Nombre: %s\n", seleccionado.nombre);
+        printf("Tiempo de Preparación: %s\n", seleccionado.tiempoPreparacion);
+        printf("Temperatura de Cocción: %d°C\n", seleccionado.temperaturaCoccion);
+        printf("Tiempo de Cocción: %s\n", seleccionado.tiempoCoccion);
+        printf("Tiempo de Empaquetado: %s\n", seleccionado.tiempoEmpaquetado);
+        printf("Porciones por 100kg: %d\n", seleccionado.porciones);
+
+        return EXIT_SUCCESS;
+    */
+
+    menu();
+
+    return 0;
+
+}
+int menu(){
+
+
+    int eleccion;
+
+    do  {
+        printf("Bienvenido al Prorama de la Planta Alimenticia PVR\n Por favor seleccione una de las opciones a continuacion\n");
+
+        printf(" 1. Ingresar nuevos elementos a la lista de alimentos disponibles\n 2.Modificar los alimentos en la lista\n 3. Empecar con el proceso de procesamiento de alimentos \n 4. Salir del programa");  
+        scanf("%d", &eleccion);
+
+        switch (eleccion)
+        {
+        case 1: 
+            agregarAlimento();
+            break;
+        
+        default:
+            break;
+        }
+
     }
 
-    // Mostrar las características del alimento seleccionado
-    Alimento seleccionado = alimentos[seleccion - 1];
-    printf("\nCaracterísticas del alimento seleccionado:\n");
-    printf("Nombre: %s\n", seleccionado.nombre);
-    printf("Tiempo de Preparación: %s\n", seleccionado.tiempoPreparacion);
-    printf("Temperatura de Cocción: %d°C\n", seleccionado.temperaturaCoccion);
-    printf("Tiempo de Cocción: %s\n", seleccionado.tiempoCoccion);
-    printf("Tiempo de Empaquetado: %s\n", seleccionado.tiempoEmpaquetado);
-    printf("Porciones por 100kg: %d\n", seleccionado.porciones);
-
-    return EXIT_SUCCESS;
+    while (eleccion !=4);
 }
+
+void agregarAlimento() {
+    Alimento nAlimento;
+
+    printf("Ingrese el nombre del alimento: ");
+    scanf("%s", nAlimento.nombre);
+
+    printf("Ingrese el tiempo en minutos por cada 100kg de alimento en preparación previa: ");
+    scanf("%d", &nAlimento.tiempoPreparacion);
+
+    printf("Ingrese la temperatura de cocción en grados Celsius: ");
+    scanf("%d", &nAlimento.temperaturaCoccion);
+
+    printf("Ingrese el tiempo de cocción en minutos por cada 100kg: ");
+    scanf("%d", &nAlimento.tiempoCoccion);
+
+    printf("Ingrese el tiempo de empaquetado en minutos por cada 100kg: ");
+    scanf("%d", &nAlimento.tiempoEmpaquetado);
+
+    printf("Ingrese las porciones por cada 100kg de alimento: ");
+    scanf("%d", &nAlimento.porciones);
+
+    FILE *file = fopen("alimentos_preparacion.csv", "a");
+    if (file == NULL) {
+        perror("Error al abrir el archivo");
+        return;
+    }
+
+    // Use %d to ensure correct integer formatting in the CSV
+    fprintf(file, "%s,%d,%d,%d,%d,%d\n",
+            nAlimento.nombre,
+            nAlimento.tiempoPreparacion,
+            nAlimento.temperaturaCoccion,
+            nAlimento.tiempoCoccion,
+            nAlimento.tiempoEmpaquetado,
+            nAlimento.porciones);
+
+    fclose(file);
+    printf("Alimento agregado exitosamente.\n");
+}
+
+
+
+
