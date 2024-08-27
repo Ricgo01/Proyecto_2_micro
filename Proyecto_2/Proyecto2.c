@@ -28,6 +28,7 @@ Fecha:       Agosto 20 2024.
 #define MAX_LINE_LENGTH 1024
 #define THREADS 4
 
+//Define atributos para cada alimento
 typedef struct {
     char nombre[50];
     int tiempoPreparacion;      
@@ -39,6 +40,8 @@ typedef struct {
     int temperaturaIngresada;   
 } Alimento;
 
+
+// Calcula el tiempo necesario para la preparacion basado en kg de alimento
 void prepararAlimento(Alimento *a) {
     // Validar kg antes de usarlo
     if (a->kg < 0 || a->kg > 100000) {
@@ -50,6 +53,7 @@ void prepararAlimento(Alimento *a) {
     Sleep(tiempoTotal * 1000);
 }
 
+// Simulacion de coccion de alimentos dependiendo de la temperatura
 void cocinarAlimento(Alimento *a) {
     // Validar temperatura antes de usarla
     if (a->temperaturaIngresada < 0 || a->temperaturaIngresada > 500) {
@@ -68,12 +72,14 @@ void cocinarAlimento(Alimento *a) {
     Sleep(tiempoTotal * 1000);
 }
 
+//Empaquetar el alimento basado en los kg
 void empaquetarAlimento(Alimento *a) {
     int tiempoTotal = (a->tiempoEmpaquetado * a->kg) / 100;
     printf("Hilo %d: Empaquetando %s...\n", omp_get_thread_num(), a->nombre);
     Sleep(tiempoTotal * 1000);
 }
 
+//Englobacion del ciclo de un alimento
 void procesarAlimento(Alimento *a) {
     prepararAlimento(a);
     cocinarAlimento(a);
@@ -81,6 +87,8 @@ void procesarAlimento(Alimento *a) {
     printf("Hilo %d: %s terminado. Se obtuvieron %d porciones.\n", omp_get_thread_num(), a->nombre, (a->porciones * a->kg) / 100);
 }
 
+
+//Cargar los alimentos posibles desde el CSV
 int cargarAlimentosDesdeCSV(const char *nombreArchivo, Alimento alimentos[]) {
     FILE *file = fopen(nombreArchivo, "r");
     if (file == NULL) {
@@ -124,6 +132,7 @@ int cargarAlimentosDesdeCSV(const char *nombreArchivo, Alimento alimentos[]) {
     return count;
 }
 
+//Escribe los datos de los alimentos en el csv
 void guardarAlimentosEnCSV(const char *nombreArchivo, Alimento alimentos[], int count) {
     FILE *file = fopen(nombreArchivo, "w");
     if (file == NULL) {
@@ -146,6 +155,7 @@ void guardarAlimentosEnCSV(const char *nombreArchivo, Alimento alimentos[], int 
     fclose(file);
 }
 
+//El usuario puede agregar los datos de un nuevo alimento
 void agregarAlimento(Alimento alimentos[], int *count) {
     Alimento nAlimento;
 
@@ -177,6 +187,7 @@ void agregarAlimento(Alimento alimentos[], int *count) {
     printf("Alimento agregado exitosamente.\n");
 }
 
+//Poder modificar datos del alimento desde el csv
 void modificarAlimento(Alimento alimentos[], int count) {
     int seleccion;
     printf("\n--- Modificar Alimento ---\n");
@@ -219,6 +230,7 @@ void modificarAlimento(Alimento alimentos[], int count) {
     printf("Alimento modificado exitosamente.\n");
 }
 
+//Imprimir todos los alimentos del csv
 void mostrarAlimentos(Alimento alimentos[], int count) {
     printf("\n--- Lista de Alimentos ---\n");
     for (int i = 0; i < count; i++) {
@@ -226,6 +238,7 @@ void mostrarAlimentos(Alimento alimentos[], int count) {
     }
 }
 
+// Seleccion de alimentos que seran procesados
 void comenzarProcesoDeCoccion(Alimento alimentos[], int count) {
     int seleccion[MAX_ALIMENTOS];
     int numSeleccionados = 0;
@@ -233,6 +246,7 @@ void comenzarProcesoDeCoccion(Alimento alimentos[], int count) {
     printf("\n--- Selección de Alimentos para Cocinar ---\n");
     mostrarAlimentos(alimentos, count);
 
+    // Colocar todos los numeros de alimentos
     printf("Seleccione los alimentos que desea cocinar (ingrese el número del alimento, 0 para terminar):\n");
     while (1) {
         int opcion;
@@ -251,9 +265,11 @@ void comenzarProcesoDeCoccion(Alimento alimentos[], int count) {
         printf("No se seleccionaron alimentos para cocinar.\n");
         return;
     }
-
+    //Se utilizan los multiples hilos indicados
     omp_set_num_threads(THREADS);
 
+
+    //Para cada uno de los alimentos se pide los datos antes de cocinar
     for (int i = 0; i < numSeleccionados; i++) {
         int idx = seleccion[i];
         do {
@@ -274,15 +290,15 @@ void comenzarProcesoDeCoccion(Alimento alimentos[], int count) {
             return;
         }
     }
+    double start_time = omp_get_wtime(); // Tiempo de Inicio 
 
-    double start_time = omp_get_wtime(); 
-
+    //Area paralelizada para procesar los alimentos 
     #pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < numSeleccionados; i++) {
         procesarAlimento(&alimentos[seleccion[i]]);
     }
 
-    double end_time = omp_get_wtime();  // Tiempo de finalización
+     double end_time = omp_get_wtime();  // Tiempo de finalización
 
     double total_time = end_time - start_time;
     printf("Tiempo total de procesamiento: %.2f segundos\n", total_time);
@@ -329,9 +345,11 @@ int menu(Alimento alimentos[], int *count) {
 }
 
 int main() {
+    //Cargar alimentos desde el csv
     Alimento alimentos[MAX_ALIMENTOS];
     int count = cargarAlimentosDesdeCSV("alimentos_preparacion.csv", alimentos);
 
+    //Verificar que se lleno la lista
     if (count >= 0) {
         menu(alimentos, &count);
     } else {
