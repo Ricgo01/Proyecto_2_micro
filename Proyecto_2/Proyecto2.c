@@ -275,10 +275,17 @@ void comenzarProcesoDeCoccion(Alimento alimentos[], int count) {
         }
     }
 
+    double start_time = omp_get_wtime(); 
+
     #pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < numSeleccionados; i++) {
         procesarAlimento(&alimentos[seleccion[i]]);
     }
+
+    double end_time = omp_get_wtime();  // Tiempo de finalización
+
+    double total_time = end_time - start_time;
+    printf("Tiempo total de procesamiento: %.2f segundos\n", total_time);
 }
 
 int menu(Alimento alimentos[], int *count) {
